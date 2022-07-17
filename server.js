@@ -1,53 +1,37 @@
 const express = require('express');
 const {MongoClient} = require('mongodb');
 const mongoose = require('mongoose');
+const ejs = require("ejs")
+const bodyParser = require("body-parser")
 
 const app=express();
 
-async function main() {
+app.use(bodyParser.urlencoded({extended: true}))
+app.set('view engine', 'ejs')
 
-    const uri = "mongodb+srv://zmunir93:Chicken12@crud-app.0e40d.mongodb.net/?retryWrites=true&w=majority";
+mongoose.connect("mongodb+srv://zmunir93:Chicken12@crud-app.0e40d.mongodb.net/crud", { useNewUrlParser: true }, { useUnifiedTopology: true });
 
-    const client = new MongoClient(uri);
-
-    try {
-        await client.connect();
-
-        await listDatabases(client);
-    } catch(e) {
-        console.error(e);
-    }
-
-    finally {
-        await client.close();
-    }
-}
-main().catch(console.error);
-
-async function listDatabases(client) {
-    const databasesList = await client.db().admin().listDatabases();
-
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(`- ${db.name}`));
+const todoSchema = {
+    note: String
 }
 
-
-// const url = "mongodb+srv://zmunir93:Chicken12@crud-app.0e40d.mongodb.net/?retryWrites=true&w=majority"
-
-// mongoose.connect(url, {useNewUrlParser: true});
-// const con = mongoose.connection
-// app.use(express.json());
-// try{
-//     con.on('open', () => {
-//         console.log('connected');
-//     })
-// }catch(error)
-// {
-//     console.log(`Error: ${error}`);
-// }
+// third "todo" is to match the collection in db. so Mongoose.model(name, [Schema], [collection]). if no collection is passed, name will be used and pluralized.
+const Note = mongoose.model("todo", todoSchema, "todo")
 
 app.get("/", function(req, res) {
-    res.send("express is working")
+    Note.find({}, function(err, note){
+        res.render('index', {
+            newNote: note
+        })
+    })
+})
+
+app.post("/", function(req, res) {
+    let newNote = new Note({
+       note: req.body.note
+    });
+    newNote.save();
+    res.redirect("/");
 })
 
 const port = 3000
