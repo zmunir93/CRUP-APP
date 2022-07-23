@@ -1,11 +1,17 @@
 const express = require('express');
+const dotenv = require('dotenv')
+const morgan = require('morgan')
 const {MongoClient} = require('mongodb');
 const mongoose = require('mongoose');
 const ejs = require("ejs")
 const bodyParser = require("body-parser")
 
+dotenv.config({path:'config.env'})
+
+const PORT = process.env.PORT || 8080
 const app=express();
 
+app.use(morgan('tiny'));
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
 
@@ -19,11 +25,13 @@ const todoSchema = {
 const Note = mongoose.model("todo", todoSchema, "todo")
 
 app.get("/", function(req, res) {
-    Note.find({}, function(err, note){
-        res.render('index', {
-            newNote: note
-        })
-    })
+
+    res.render('index')
+    // Note.find({}, function(err, note){
+    //     res.render('index', {
+    //         newNote: note
+    //     })
+    // })
 })
 
 app.post("/", function(req, res) {
@@ -34,7 +42,18 @@ app.post("/", function(req, res) {
     res.redirect("/");
 })
 
-const port = 3000
-app.listen(port, () => {
-    console.log('Server started on localhost:3000');
+// if(window.location.pathname == "/"){
+//     $ondelete = $(".form.button");
+//     $ondelete.click(function(){
+//         var id = $(this).attr("data-id")
+
+//     })
+// }
+
+// app.delete("/", function(req, res) {
+//     newNote.delete()
+// })
+
+app.listen(PORT, () => {
+    console.log(`Server started on http://localhost:${PORT}`);
 })

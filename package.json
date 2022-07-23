@@ -7,13 +7,16 @@
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Zeshan Munir",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
     "mongodb": "^4.7.0",
     "mongoose": "^6.4.0",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.16"
   }
 }
